@@ -2,10 +2,12 @@
 
 import { driverService } from "@/lib/services";
 import { DriverFormData } from "@/lib/validations";
+import { requirePermission } from "@/lib/auth/guard";
 import { revalidatePath } from "next/cache";
 
 export async function createDriverAction(data: DriverFormData) {
   try {
+    await requirePermission("drivers:write");
     const driver = await driverService.create(data);
     revalidatePath("/drivers");
     revalidatePath("/dashboard");
@@ -17,6 +19,7 @@ export async function createDriverAction(data: DriverFormData) {
 
 export async function updateDriverAction(id: string, data: Partial<DriverFormData>) {
   try {
+    await requirePermission("drivers:write");
     const driver = await driverService.update(id, data);
     revalidatePath("/drivers");
     revalidatePath("/dashboard");
@@ -28,6 +31,7 @@ export async function updateDriverAction(id: string, data: Partial<DriverFormDat
 
 export async function deleteDriverAction(id: string) {
   try {
+    await requirePermission("drivers:write");
     await driverService.delete(id);
     revalidatePath("/drivers");
     revalidatePath("/dashboard");
