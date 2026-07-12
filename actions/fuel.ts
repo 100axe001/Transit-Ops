@@ -2,10 +2,12 @@
 
 import { fuelService } from "@/lib/services";
 import { FuelLogFormData } from "@/lib/validations";
+import { requirePermission } from "@/lib/auth/guard";
 import { revalidatePath } from "next/cache";
 
 export async function createFuelLogAction(data: FuelLogFormData) {
   try {
+    await requirePermission("fuel:write");
     const log = await fuelService.create(data);
     revalidatePath("/fuel");
     revalidatePath("/dashboard");
@@ -17,6 +19,7 @@ export async function createFuelLogAction(data: FuelLogFormData) {
 
 export async function deleteFuelLogAction(id: string) {
   try {
+    await requirePermission("fuel:write");
     await fuelService.delete(id);
     revalidatePath("/fuel");
     revalidatePath("/dashboard");
