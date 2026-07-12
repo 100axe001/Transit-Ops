@@ -39,17 +39,21 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for details.
 - **Driver Management**: License monitoring, safety scores, availability tracking
 - **Trip Dispatch**: Create, Dispatch, Complete/Cancel with automatic status transitions
 - **Maintenance**: Open/close records that automatically move vehicles in/out of shop
-- **Fuel Tracking**: Log consumption, calculate efficiency (km/L)
+- **Fuel Tracking**: Log consumption, calculate efficiency (km/L), per-vehicle filter
 - **Expense Tracking**: Categorized expenses (toll, repair, insurance, parking)
-- **Reports & Analytics**: Fleet utilization, fuel efficiency, vehicle ROI, trip trends
+- **Reports & Analytics**: Summary KPIs, fleet utilization, fuel efficiency, vehicle ROI, trip trends, top costliest vehicles
 - **CSV Export**: Download any report as CSV
-- **Dashboard**: KPI cards, charts, alerts for expiring licenses and active maintenance
-- **Authentication**: JWT sessions, role-based access control (4 roles)
-- **Dark Mode**: System-aware theme switching
+- **Dashboard**: 7 KPI cards, filters (vehicle type / status / region), vehicle-status bars, cost overview, and alerts for expiring licenses and active maintenance
+- **Authentication & RBAC**: JWT sessions with **server-side enforced** role-based access — every server action is permission-gated, nav and pages are filtered per role (4 roles)
+- **Settings**: Profile, appearance, general preferences, and a live RBAC access matrix
+- **Onboarding**: First-time welcome tour
+- **Theme**: Light / Dark / System toggle
+- **Localization**: Indian conventions throughout — ₹ currency with lakh/crore grouping (`en-IN`), kilometers, and liters
 - **Responsive**: Works on desktop and mobile
 
 ## Business Rules Enforced
 
+- Vehicle registration numbers must be unique
 - Retired/In-Shop vehicles cannot be dispatched
 - Expired/Suspended drivers cannot be assigned
 - Cargo weight must not exceed vehicle capacity
@@ -58,9 +62,24 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for details.
 - Opening maintenance moves vehicle to "In Shop"
 - Closing maintenance moves vehicle to "Available" (unless retired)
 
+All rules are enforced in the service layer inside atomic transactions, so an API
+call cannot bypass them. Authorization is likewise enforced server-side, not just in the UI.
+
+## Billing & Compliance Layer (in progress)
+
+An India-focused transport billing layer is being added on top of the fleet core:
+
+- **Phase 1 (foundation landed)**: Company & Party masters, Bilty (LR) booking with
+  auto-calculated charges (₹15/quintal labour + ₹30 GR + door/PF/tax), sequential
+  bilty numbering, party ledger with payments (Cash/UPI/Bank), and `Bilty.total → Trip.revenue` sync.
+- **Planned**: Challan, E-Way Bill validity & expiry tracking, Fastag toll balances,
+  trip P&L, GST summaries, PDF documents, and email expiry/compliance alerts.
+
+See `prisma/schema.prisma` (billing section) for the data model.
+
 ## Tech Stack
 
-- **Frontend**: Next.js 15, React 19, TypeScript, TailwindCSS, shadcn/ui
+- **Frontend**: Next.js 16 (App Router), React 19, TypeScript, TailwindCSS, shadcn/ui
 - **Backend**: Next.js Server Actions
 - **Database**: PostgreSQL + Prisma ORM
 - **Auth**: Custom JWT (jose)
@@ -70,8 +89,10 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for details.
 
 ## Database Schema
 
-6 core entities: Vehicle, Driver, Trip, Maintenance, FuelLog, Expense
-Plus: User (authentication)
+Core fleet entities: Vehicle, Driver, Trip, Maintenance, FuelLog, Expense — plus User (authentication).
+
+Billing layer (Phase 1): Company, Party, Bilty, Payment, Invoice, and a Counter for
+sequential document numbering.
 
 See `prisma/schema.prisma` for the full schema.
 
@@ -83,11 +104,11 @@ The seed script generates: 25 vehicles, 40 drivers, 50 trips, 15 maintenance rec
 
 - Real-time updates via WebSocket
 - GPS/telematics integration
-- Document uploads (insurance, registration)
-- Email notifications for license expiry
-- Advanced filtering and global search
+- Global search across modules
 - Audit logs and activity timeline
 - Multi-tenant support
 - Fleet map visualization
 - AI-powered maintenance prediction
 - PWA support
+
+(Billing-layer items — E-Way Bill, Fastag, PDF documents, and email expiry alerts — are tracked in the Billing & Compliance section above.)
