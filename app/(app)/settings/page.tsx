@@ -10,6 +10,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/shared/page-header";
 import { AppearanceCard } from "@/components/settings/appearance-card";
+import { GeneralSettings } from "@/components/settings/general-settings";
+import { RbacMatrix } from "@/components/settings/rbac-matrix";
 
 export default async function SettingsPage() {
   const session = await requirePageAccess("settings:read");
@@ -48,6 +50,11 @@ export default async function SettingsPage() {
       </Card>
 
       <AppearanceCard />
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <GeneralSettings />
+        <RbacMatrix />
+      </div>
     </div>
   );
 }
