@@ -18,6 +18,11 @@ This starts PostgreSQL + the app. Visit http://localhost:3000.
 # Start PostgreSQL (via Docker or locally)
 docker compose up db -d
 
+# Set up your local environment variables
+# (.env is gitignored — it stays on your machine only)
+cp .env.example .env
+# then edit .env if your database/port differ from the defaults
+
 # Install dependencies
 npm install
 
