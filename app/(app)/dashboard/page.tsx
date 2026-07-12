@@ -8,8 +8,10 @@ import { MaintenanceAlerts } from "@/components/dashboard/maintenance-alerts";
 import { LicenseAlerts } from "@/components/dashboard/license-alerts";
 import { FleetChart } from "@/components/dashboard/fleet-chart";
 import { ExpenseChart } from "@/components/dashboard/expense-chart";
+import { requirePageAccess } from "@/lib/auth/guard";
 
 export default async function DashboardPage() {
+  await requirePageAccess("dashboard:read");
   const [kpis, recentTrips, openMaintenance, expiringLicenses, expenseBreakdown] =
     await Promise.all([
       analyticsService.getDashboardKPIs(),

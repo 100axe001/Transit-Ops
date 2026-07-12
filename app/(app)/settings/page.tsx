@@ -1,9 +1,9 @@
-import { getSession } from "@/lib/auth";
+import { requirePageAccess } from "@/lib/auth/guard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/shared/page-header";
 
 export default async function SettingsPage() {
-  const session = await getSession();
+  const session = await requirePageAccess("settings:read");
 
   return (
     <div className="space-y-6">
