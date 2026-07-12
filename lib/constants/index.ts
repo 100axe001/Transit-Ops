@@ -10,23 +10,25 @@ import {
   Settings,
   LucideIcon,
 } from "lucide-react";
+import type { Permission } from "@/lib/permissions";
 
 export interface NavItem {
   title: string;
   href: string;
   icon: LucideIcon;
+  permission: Permission;
 }
 
 export const navItems: NavItem[] = [
-  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { title: "Vehicles", href: "/vehicles", icon: Truck },
-  { title: "Drivers", href: "/drivers", icon: Users },
-  { title: "Trips", href: "/trips", icon: Route },
-  { title: "Maintenance", href: "/maintenance", icon: Wrench },
-  { title: "Fuel", href: "/fuel", icon: Fuel },
-  { title: "Expenses", href: "/expenses", icon: Receipt },
-  { title: "Reports", href: "/reports", icon: BarChart3 },
-  { title: "Settings", href: "/settings", icon: Settings },
+  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard, permission: "dashboard:read" },
+  { title: "Vehicles", href: "/vehicles", icon: Truck, permission: "vehicles:read" },
+  { title: "Drivers", href: "/drivers", icon: Users, permission: "drivers:read" },
+  { title: "Trips", href: "/trips", icon: Route, permission: "trips:read" },
+  { title: "Maintenance", href: "/maintenance", icon: Wrench, permission: "maintenance:read" },
+  { title: "Fuel", href: "/fuel", icon: Fuel, permission: "fuel:read" },
+  { title: "Expenses", href: "/expenses", icon: Receipt, permission: "expenses:read" },
+  { title: "Reports", href: "/reports", icon: BarChart3, permission: "reports:read" },
+  { title: "Settings", href: "/settings", icon: Settings, permission: "settings:read" },
 ];
 
 export const vehicleTypes = [
