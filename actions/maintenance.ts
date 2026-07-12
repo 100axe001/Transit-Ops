@@ -2,10 +2,12 @@
 
 import { maintenanceService } from "@/lib/services";
 import { MaintenanceFormData } from "@/lib/validations";
+import { requirePermission } from "@/lib/auth/guard";
 import { revalidatePath } from "next/cache";
 
 export async function createMaintenanceAction(data: MaintenanceFormData) {
   try {
+    await requirePermission("maintenance:write");
     const record = await maintenanceService.create(data);
     revalidatePath("/maintenance");
     revalidatePath("/vehicles");
@@ -18,6 +20,7 @@ export async function createMaintenanceAction(data: MaintenanceFormData) {
 
 export async function closeMaintenanceAction(id: string) {
   try {
+    await requirePermission("maintenance:write");
     const record = await maintenanceService.close(id);
     revalidatePath("/maintenance");
     revalidatePath("/vehicles");
@@ -30,6 +33,7 @@ export async function closeMaintenanceAction(id: string) {
 
 export async function deleteMaintenanceAction(id: string) {
   try {
+    await requirePermission("maintenance:write");
     await maintenanceService.delete(id);
     revalidatePath("/maintenance");
     revalidatePath("/dashboard");
