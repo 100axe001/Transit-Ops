@@ -1,7 +1,7 @@
 "use client";
 
 import { StatCard } from "@/components/shared/stat-card";
-import { Truck, Users, Route, Wrench, Fuel, DollarSign, Activity, AlertTriangle } from "lucide-react";
+import { Truck, CheckCircle, Wrench, Route, Clock, Users, Activity } from "lucide-react";
 
 interface KPIData {
   vehicles: { total: number; available: number; onTrip: number; inShop: number; retired: number; active: number };
@@ -14,52 +14,48 @@ interface KPIData {
 
 export function DashboardKPIs({ kpis }: { kpis: KPIData }) {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
       <StatCard
         title="Active Vehicles"
         value={kpis.vehicles.active}
         icon={Truck}
-        description={`${kpis.vehicles.available} available, ${kpis.vehicles.onTrip} on trip`}
+        description="Available + on trip"
       />
       <StatCard
-        title="Vehicles In Shop"
+        title="Available Vehicles"
+        value={kpis.vehicles.available}
+        icon={CheckCircle}
+        description="Ready to dispatch"
+      />
+      <StatCard
+        title="In Maintenance"
         value={kpis.vehicles.inShop}
         icon={Wrench}
         description={`${kpis.vehicles.retired} retired`}
       />
       <StatCard
-        title="Active Drivers"
+        title="Active Trips"
+        value={kpis.trips.dispatched}
+        icon={Route}
+        description="Currently dispatched"
+      />
+      <StatCard
+        title="Pending Trips"
+        value={kpis.trips.draft}
+        icon={Clock}
+        description="Draft, awaiting dispatch"
+      />
+      <StatCard
+        title="Drivers On Duty"
         value={kpis.drivers.available + kpis.drivers.onTrip}
         icon={Users}
-        description={`${kpis.drivers.onTrip} on trip, ${kpis.drivers.available} available`}
+        description={`${kpis.drivers.onTrip} on trip`}
       />
       <StatCard
         title="Fleet Utilization"
         value={`${kpis.fleetUtilization.toFixed(1)}%`}
         icon={Activity}
-        description="Vehicles currently on trips"
-      />
-      <StatCard
-        title="Active Trips"
-        value={kpis.trips.dispatched}
-        icon={Route}
-        description={`${kpis.trips.draft} pending, ${kpis.trips.completed} completed`}
-      />
-      <StatCard
-        title="Fuel Cost"
-        value={`$${kpis.costs.fuel.toLocaleString()}`}
-        icon={Fuel}
-      />
-      <StatCard
-        title="Maintenance Cost"
-        value={`$${kpis.costs.maintenance.toLocaleString()}`}
-        icon={AlertTriangle}
-      />
-      <StatCard
-        title="Total Operational Cost"
-        value={`$${kpis.costs.total.toLocaleString()}`}
-        icon={DollarSign}
-        description={`Revenue: $${kpis.revenue.toLocaleString()}`}
+        description="On trip vs. fleet"
       />
     </div>
   );

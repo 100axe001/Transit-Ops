@@ -1,10 +1,37 @@
 // Analytics service - aggregates data for dashboard KPIs
 import { prisma } from "@/lib/prisma";
+import { VehicleType, VehicleStatus, Prisma } from "@prisma/client";
 import { calculateVehicleROI } from "@/lib/domain/vehicle";
 import { calculateFuelEfficiency } from "@/lib/domain/trip";
 
+export interface DashboardFilters {
+  vehicleType?: VehicleType;
+  status?: VehicleStatus;
+  region?: string;
+}
+
 export const analyticsService = {
-  async getDashboardKPIs() {
+  // Distinct, non-empty regions for the dashboard region filter.
+  async getVehicleRegions() {
+    const rows = await prisma.vehicle.findMany({
+      where: { region: { not: null } },
+      distinct: ["region"],
+      select: { region: true },
+      orderBy: { region: "asc" },
+    });
+    return rows
+      .map((r) => r.region)
+      .filter((r): r is string => Boolean(r));
+  },
+
+  async getDashboardKPIs(filters: DashboardFilters = {}) {
+    // Vehicle-centric filters (type / status / region) narrow the fleet KPIs.
+    const vehicleWhere: Prisma.VehicleWhereInput = {
+      ...(filters.vehicleType ? { vehicleType: filters.vehicleType } : {}),
+      ...(filters.status ? { status: filters.status } : {}),
+      ...(filters.region ? { region: filters.region } : {}),
+    };
+
     const [
       vehicleStatusCounts,
       driverStatusCounts,
@@ -15,14 +42,14 @@ export const analyticsService = {
       totalRevenue,
       totalVehicles,
     ] = await Promise.all([
-      prisma.vehicle.groupBy({ by: ["status"], _count: true }),
+      prisma.vehicle.groupBy({ by: ["status"], where: vehicleWhere, _count: true }),
       prisma.driver.groupBy({ by: ["status"], _count: true }),
       prisma.trip.groupBy({ by: ["status"], _count: true }),
       prisma.fuelLog.aggregate({ _sum: { cost: true } }),
       prisma.maintenance.aggregate({ _sum: { cost: true } }),
       prisma.expense.aggregate({ _sum: { amount: true } }),
       prisma.trip.aggregate({ where: { status: "COMPLETED" }, _sum: { revenue: true } }),
-      prisma.vehicle.count(),
+      prisma.vehicle.count({ where: vehicleWhere }),
     ]);
 
     const vehicleCounts = Object.fromEntries(

@@ -2,19 +2,34 @@ import { analyticsService } from "@/lib/services";
 import { tripRepository } from "@/lib/repositories";
 import { driverRepository } from "@/lib/repositories";
 import { maintenanceRepository } from "@/lib/repositories";
+import { VehicleType, VehicleStatus } from "@prisma/client";
 import { DashboardKPIs } from "@/components/dashboard/kpis";
+import { DashboardFilters } from "@/components/dashboard/dashboard-filters";
+import { VehicleStatusBars } from "@/components/dashboard/vehicle-status-bars";
+import { CostOverview } from "@/components/dashboard/cost-overview";
 import { RecentTrips } from "@/components/dashboard/recent-trips";
 import { MaintenanceAlerts } from "@/components/dashboard/maintenance-alerts";
 import { LicenseAlerts } from "@/components/dashboard/license-alerts";
-import { FleetChart } from "@/components/dashboard/fleet-chart";
 import { ExpenseChart } from "@/components/dashboard/expense-chart";
 import { requirePageAccess } from "@/lib/auth/guard";
 
-export default async function DashboardPage() {
+interface Props {
+  searchParams: Promise<{ type?: string; status?: string; region?: string }>;
+}
+
+export default async function DashboardPage({ searchParams }: Props) {
   await requirePageAccess("dashboard:read");
-  const [kpis, recentTrips, openMaintenance, expiringLicenses, expenseBreakdown] =
+  const params = await searchParams;
+  const filters = {
+    vehicleType: params.type as VehicleType | undefined,
+    status: params.status as VehicleStatus | undefined,
+    region: params.region,
+  };
+
+  const [kpis, regions, recentTrips, openMaintenance, expiringLicenses, expenseBreakdown] =
     await Promise.all([
-      analyticsService.getDashboardKPIs(),
+      analyticsService.getDashboardKPIs(filters),
+      analyticsService.getVehicleRegions(),
       tripRepository.findRecent(5),
       maintenanceRepository.findOpen(),
       driverRepository.findExpiringLicenses(30),
@@ -27,11 +42,18 @@ export default async function DashboardPage() {
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">Fleet operations overview</p>
       </div>
+
+      <DashboardFilters regions={regions} />
+
       <DashboardKPIs kpis={kpis} />
+
+      <CostOverview costs={kpis.costs} revenue={kpis.revenue} />
+
       <div className="grid gap-6 md:grid-cols-2">
-        <FleetChart kpis={kpis} />
+        <VehicleStatusBars kpis={kpis} />
         <ExpenseChart data={expenseBreakdown} />
       </div>
+
       <div className="grid gap-6 md:grid-cols-3">
         <RecentTrips trips={recentTrips} />
         <MaintenanceAlerts records={openMaintenance} />
