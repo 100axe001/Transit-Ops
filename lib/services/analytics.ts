@@ -1,3 +1,4 @@
+// Analytics service - aggregates data for dashboard KPIs
 import { prisma } from "@/lib/prisma";
 import { calculateVehicleROI } from "@/lib/domain/vehicle";
 import { calculateFuelEfficiency } from "@/lib/domain/trip";
