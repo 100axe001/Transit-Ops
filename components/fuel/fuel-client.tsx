@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Fuel } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PageHeader } from "@/components/shared/page-header";
@@ -26,7 +27,16 @@ interface Props {
 export function FuelClient({ logs, total, page, vehicles }: Props) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const totalPages = Math.ceil(total / 20);
+
+  function handleVehicleFilter(value: string | null) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value && value !== "all") params.set("vehicleId", value);
+    else params.delete("vehicleId");
+    params.delete("page");
+    router.push(`/fuel?${params.toString()}`);
+  }
 
   async function handleDelete(id: string) {
     const result = await deleteFuelLogAction(id);
@@ -41,6 +51,25 @@ export function FuelClient({ logs, total, page, vehicles }: Props) {
           <Plus className="h-4 w-4 mr-2" /> Log Fuel
         </Button>
       </PageHeader>
+
+      <div className="flex items-center gap-4">
+        <Select
+          defaultValue={searchParams.get("vehicleId") || "all"}
+          onValueChange={handleVehicleFilter}
+        >
+          <SelectTrigger className="w-56">
+            <SelectValue placeholder="All Vehicles" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Vehicles</SelectItem>
+            {vehicles.map((v) => (
+              <SelectItem key={v.id} value={v.id}>
+                {v.vehicleName}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       {logs.length === 0 ? (
         <EmptyState icon={Fuel} title="No fuel logs" description="Start logging fuel to track consumption">
