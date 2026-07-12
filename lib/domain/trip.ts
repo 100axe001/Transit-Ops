@@ -1,3 +1,4 @@
+// Trip domain business rules
 import { TripStatus } from "@prisma/client";
 
 export function canDispatchTrip(tripStatus: TripStatus): { valid: boolean; error?: string } {
