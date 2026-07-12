@@ -9,7 +9,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar />
+      <Sidebar role={session.role} />
       <div className="md:pl-64 flex flex-col min-h-screen">
         <Navbar user={{ name: session.name, email: session.email, role: session.role }} />
         <main className="flex-1 p-6">{children}</main>

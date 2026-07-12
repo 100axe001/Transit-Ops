@@ -4,10 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { navItems } from "@/lib/constants";
+import { hasPermission } from "@/lib/permissions";
+import type { UserRole } from "@prisma/client";
 import { Truck } from "lucide-react";
 
-export function Sidebar() {
+export function Sidebar({ role }: { role: UserRole }) {
   const pathname = usePathname();
+  const visibleItems = navItems.filter((item) => hasPermission(role, item.permission));
 
   return (
     <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-card border-r">
@@ -18,7 +21,7 @@ export function Sidebar() {
         <span className="text-lg font-semibold">TransitOps</span>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
             <Link
