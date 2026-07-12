@@ -1,3 +1,4 @@
+// Report generation with chart visualization and CSV export
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
