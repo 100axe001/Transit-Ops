@@ -2,10 +2,12 @@
 
 import { expenseService } from "@/lib/services";
 import { ExpenseFormData } from "@/lib/validations";
+import { requirePermission } from "@/lib/auth/guard";
 import { revalidatePath } from "next/cache";
 
 export async function createExpenseAction(data: ExpenseFormData) {
   try {
+    await requirePermission("expenses:write");
     const expense = await expenseService.create(data);
     revalidatePath("/expenses");
     revalidatePath("/dashboard");
@@ -17,6 +19,7 @@ export async function createExpenseAction(data: ExpenseFormData) {
 
 export async function updateExpenseAction(id: string, data: Partial<ExpenseFormData>) {
   try {
+    await requirePermission("expenses:write");
     const expense = await expenseService.update(id, data);
     revalidatePath("/expenses");
     revalidatePath("/dashboard");
@@ -28,6 +31,7 @@ export async function updateExpenseAction(id: string, data: Partial<ExpenseFormD
 
 export async function deleteExpenseAction(id: string) {
   try {
+    await requirePermission("expenses:write");
     await expenseService.delete(id);
     revalidatePath("/expenses");
     revalidatePath("/dashboard");
