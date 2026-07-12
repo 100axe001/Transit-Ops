@@ -65,17 +65,40 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for details.
 All rules are enforced in the service layer inside atomic transactions, so an API
 call cannot bypass them. Authorization is likewise enforced server-side, not just in the UI.
 
-## Billing & Compliance Layer (in progress)
+## Billing & Compliance Layer
 
-An India-focused transport billing layer is being added on top of the fleet core:
+An India-first billing layer sitting on top of the fleet core — bilty (LR), challans,
+e-way bills, party ledgers, the stuff a small transport office actually runs on. It's a
+lot, so it ships in phases.
 
-- **Phase 1 (foundation landed)**: Company & Party masters, Bilty (LR) booking with
-  auto-calculated charges (₹15/quintal labour + ₹30 GR + door/PF/tax), sequential
-  bilty numbering, party ledger with payments (Cash/UPI/Bank), and `Bilty.total → Trip.revenue` sync.
-- **Planned**: Challan, E-Way Bill validity & expiry tracking, Fastag toll balances,
-  trip P&L, GST summaries, PDF documents, and email expiry/compliance alerts.
+**✅ Phase 1 — done, usable now.** Add your parties (consignors/consignees), book a bilty
+and watch the charges auto-calculate as you type (₹15/qtl labour + ₹30 GR + any
+door/PF/tax — no editing the total by hand), get an auto bilty number (`BLT-YYMMDD-XXXX`,
+sequential per day), record Cash/UPI/Bank payments against a party, and see it all on the
+dashboard (biltys today, freight today, total outstanding). Link a bilty to a trip and its
+total flows into the trip's revenue.
 
-See `prisma/schema.prisma` (billing section) for the data model.
+**🔜 Phase 2 — Challan + printing.** Turn a bilty into a driver challan, and make everything
+printable: 2 copies for a bilty, 1 for a challan, with the company header + "Owner's Risk" +
+E&OE disclaimer stamped on. Company master gets its own screen here too.
+
+**🔜 Phase 3 — E-Way Bill.** Validity (1 day per 100 km), 🟢/🟡/🔴 status by how close it is
+to expiring, and email nudges at 6h / 2h / expiry so nobody eats the ₹10,000 fine.
+
+**🔜 Phase 4 — Fastag + Trip P&L.** Log tolls per truck, ping the owner when a Fastag drops
+under ₹500, and compute real per-trip profit = freight − (fuel + toll + salary + other).
+
+**🔜 Phase 5 — Reports + PDF.** Daily/monthly bilty reports, party outstanding, GST summary —
+all exportable as PDF.
+
+**Still on the to-do (being honest):** the alert plumbing is built around email but isn't
+wired to a real SMTP provider yet, so alerts are stored, not actually sent — swapping in a
+real mailer is basically a one-file change. The timed checks (EWB/Fastag/expiry) want a cron
+job to run on a schedule; for now those statuses are worked out when you open the page. And
+the PDF/print layouts aren't built yet (jsPDF is installed, just unused). Challan, E-Way
+Bill, and Fastag screens are still to come.
+
+See `prisma/schema.prisma` for the data model.
 
 ## Tech Stack
 
