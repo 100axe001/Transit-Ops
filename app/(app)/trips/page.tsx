@@ -1,5 +1,6 @@
 import { tripService, vehicleService, driverService } from "@/lib/services";
 import { TripStatus } from "@prisma/client";
+import { requirePageAccess } from "@/lib/auth/guard";
 import { TripsClient } from "@/components/trips/trips-client";
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export default async function TripsPage({ searchParams }: Props) {
+  await requirePageAccess("trips:read");
   const params = await searchParams;
   const page = Number(params.page) || 1;
   const [tripData, availableVehicles, availableDrivers] = await Promise.all([

@@ -1,5 +1,6 @@
 import { maintenanceService, vehicleService } from "@/lib/services";
 import { MaintenanceStatus } from "@prisma/client";
+import { requirePageAccess } from "@/lib/auth/guard";
 import { MaintenanceClient } from "@/components/maintenance/maintenance-client";
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export default async function MaintenancePage({ searchParams }: Props) {
+  await requirePageAccess("maintenance:read");
   const params = await searchParams;
   const page = Number(params.page) || 1;
   const [maintenanceData, vehicles] = await Promise.all([
