@@ -99,7 +99,7 @@ export function TripDialog({ open, onOpenChange, vehicles, drivers }: Props) {
               {errors.plannedDistance && <p className="text-xs text-destructive">{errors.plannedDistance.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label>Revenue ($)</Label>
+              <Label>Revenue (₹)</Label>
               <Input type="number" {...register("revenue")} />
               {errors.revenue && <p className="text-xs text-destructive">{errors.revenue.message}</p>}
             </div>

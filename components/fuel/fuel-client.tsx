@@ -13,6 +13,7 @@ import { deleteFuelLogAction } from "@/actions/fuel";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Trash2 } from "lucide-react";
+import { formatCurrency, formatKm, formatLiters } from "@/lib/format";
 import type { FuelLog, Vehicle } from "@prisma/client";
 
 type FuelLogWithVehicle = FuelLog & { vehicle: Vehicle };
@@ -88,7 +89,7 @@ export function FuelClient({ logs, total, page, vehicles }: Props) {
                   <TableHead>Liters</TableHead>
                   <TableHead>Cost</TableHead>
                   <TableHead>Odometer</TableHead>
-                  <TableHead>$/Liter</TableHead>
+                  <TableHead>₹/L</TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -97,10 +98,10 @@ export function FuelClient({ logs, total, page, vehicles }: Props) {
                   <TableRow key={log.id}>
                     <TableCell className="font-medium">{log.vehicle.vehicleName}</TableCell>
                     <TableCell>{format(new Date(log.date), "MMM d, yyyy")}</TableCell>
-                    <TableCell>{log.liters.toFixed(1)} L</TableCell>
-                    <TableCell>${log.cost.toFixed(2)}</TableCell>
-                    <TableCell>{log.odometer.toLocaleString()} km</TableCell>
-                    <TableCell>${(log.cost / log.liters).toFixed(2)}</TableCell>
+                    <TableCell>{formatLiters(log.liters)}</TableCell>
+                    <TableCell>{formatCurrency(log.cost, { decimals: true })}</TableCell>
+                    <TableCell>{formatKm(log.odometer)}</TableCell>
+                    <TableCell>{formatCurrency(log.cost / log.liters, { decimals: true })}</TableCell>
                     <TableCell>
                       <Button variant="ghost" size="icon" onClick={() => handleDelete(log.id)}>
                         <Trash2 className="h-4 w-4 text-destructive" />

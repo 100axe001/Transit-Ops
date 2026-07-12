@@ -9,7 +9,8 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tool
 import { StatCard } from "@/components/shared/stat-card";
 import { PageHeader } from "@/components/shared/page-header";
 import { cn } from "@/lib/utils";
-import { Download, Gauge, Activity, DollarSign, TrendingUp } from "lucide-react";
+import { formatCurrency } from "@/lib/format";
+import { Download, Gauge, Activity, IndianRupee, TrendingUp } from "lucide-react";
 import Papa from "papaparse";
 
 interface FuelEfficiencyItem {
@@ -99,8 +100,8 @@ export function ReportsClient({
         />
         <StatCard
           title="Operational Cost"
-          value={`$${operationalCost.toLocaleString()}`}
-          icon={DollarSign}
+          value={formatCurrency(operationalCost)}
+          icon={IndianRupee}
           description="Fuel + maintenance + expenses"
         />
         <StatCard
@@ -126,7 +127,7 @@ export function ReportsClient({
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">{v.name}</span>
                   <span className="font-medium tabular-nums">
-                    ${v.cost.toLocaleString()}
+                    {formatCurrency(v.cost)}
                   </span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-muted">
@@ -226,10 +227,10 @@ export function ReportsClient({
                     <TableRow key={item.id}>
                       <TableCell className="font-medium">{item.name}</TableCell>
                       <TableCell>{item.registration}</TableCell>
-                      <TableCell>${item.revenue.toLocaleString()}</TableCell>
-                      <TableCell>${item.fuelCost.toLocaleString()}</TableCell>
-                      <TableCell>${item.maintenanceCost.toLocaleString()}</TableCell>
-                      <TableCell>${item.acquisitionCost.toLocaleString()}</TableCell>
+                      <TableCell>{formatCurrency(item.revenue)}</TableCell>
+                      <TableCell>{formatCurrency(item.fuelCost)}</TableCell>
+                      <TableCell>{formatCurrency(item.maintenanceCost)}</TableCell>
+                      <TableCell>{formatCurrency(item.acquisitionCost)}</TableCell>
                       <TableCell className={item.roi >= 0 ? "text-green-600" : "text-red-600"}>
                         {item.roi.toFixed(1)}%
                       </TableCell>
@@ -260,7 +261,7 @@ export function ReportsClient({
                     <YAxis fontSize={11} />
                     <Tooltip />
                     <Line type="monotone" dataKey="trips" stroke="#3b82f6" name="Trips" />
-                    <Line type="monotone" dataKey="revenue" stroke="#22c55e" name="Revenue ($)" />
+                    <Line type="monotone" dataKey="revenue" stroke="#22c55e" name="Revenue (₹)" />
                   </LineChart>
                 </ResponsiveContainer>
               )}
@@ -287,7 +288,7 @@ export function ReportsClient({
                       <XAxis dataKey="name" fontSize={11} />
                       <YAxis fontSize={11} />
                       <Tooltip />
-                      <Bar dataKey="value" fill="#f97316" radius={[4, 4, 0, 0]} name="Cost ($)" />
+                      <Bar dataKey="value" fill="#f97316" radius={[4, 4, 0, 0]} name="Cost (₹)" />
                     </BarChart>
                   </ResponsiveContainer>
                   <Table>
@@ -301,7 +302,7 @@ export function ReportsClient({
                       {expenseBreakdown.map((item, i) => (
                         <TableRow key={i}>
                           <TableCell className="font-medium">{item.name}</TableCell>
-                          <TableCell>${item.value.toLocaleString()}</TableCell>
+                          <TableCell>{formatCurrency(item.value)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

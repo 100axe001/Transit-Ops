@@ -8,6 +8,7 @@ import { closeMaintenanceAction } from "@/actions/maintenance";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { formatCurrency } from "@/lib/format";
 import type { Maintenance, Vehicle } from "@prisma/client";
 
 type MaintenanceWithVehicle = Maintenance & { vehicle: Vehicle };
@@ -52,7 +53,7 @@ export function MaintenanceTable({ records, total, page }: Props) {
               <TableRow key={record.id}>
                 <TableCell className="font-medium">{record.title}</TableCell>
                 <TableCell>{record.vehicle.vehicleName} ({record.vehicle.registrationNumber})</TableCell>
-                <TableCell>${record.cost.toLocaleString()}</TableCell>
+                <TableCell>{formatCurrency(record.cost)}</TableCell>
                 <TableCell>{format(new Date(record.openedAt), "MMM d, yyyy")}</TableCell>
                 <TableCell>{record.closedAt ? format(new Date(record.closedAt), "MMM d, yyyy") : "—"}</TableCell>
                 <TableCell><StatusBadge status={record.status} /></TableCell>

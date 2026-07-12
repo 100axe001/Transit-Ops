@@ -8,6 +8,7 @@ import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { deleteVehicleAction } from "@/actions/vehicles";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { formatKm, formatNumber } from "@/lib/format";
 import type { Vehicle } from "@prisma/client";
 
 interface Props {
@@ -54,8 +55,8 @@ export function VehicleTable({ vehicles, total, page, onEdit }: Props) {
                 <TableCell>{vehicle.vehicleName}</TableCell>
                 <TableCell>{vehicle.model}</TableCell>
                 <TableCell>{vehicle.vehicleType}</TableCell>
-                <TableCell>{vehicle.maximumLoadCapacity}</TableCell>
-                <TableCell>{vehicle.odometer.toLocaleString()} km</TableCell>
+                <TableCell>{formatNumber(vehicle.maximumLoadCapacity)} kg</TableCell>
+                <TableCell>{formatKm(vehicle.odometer)}</TableCell>
                 <TableCell><StatusBadge status={vehicle.status} /></TableCell>
                 <TableCell>
                   <DropdownMenu>

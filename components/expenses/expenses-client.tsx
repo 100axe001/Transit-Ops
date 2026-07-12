@@ -13,6 +13,7 @@ import { deleteExpenseAction } from "@/actions/expenses";
 import { expenseTypes } from "@/lib/constants";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { formatCurrency } from "@/lib/format";
 import type { Expense, Vehicle } from "@prisma/client";
 
 type ExpenseWithVehicle = Expense & { vehicle: Vehicle };
@@ -91,7 +92,7 @@ export function ExpensesClient({ expenses, total, page, vehicles }: Props) {
                   <TableRow key={expense.id}>
                     <TableCell className="font-medium">{expense.vehicle.vehicleName}</TableCell>
                     <TableCell>{expense.type}</TableCell>
-                    <TableCell>${expense.amount.toFixed(2)}</TableCell>
+                    <TableCell>{formatCurrency(expense.amount, { decimals: true })}</TableCell>
                     <TableCell>{expense.description || "—"}</TableCell>
                     <TableCell>{format(new Date(expense.date), "MMM d, yyyy")}</TableCell>
                     <TableCell>

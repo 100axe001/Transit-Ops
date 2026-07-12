@@ -1,21 +1,22 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Fuel, Wrench, Receipt, DollarSign, TrendingUp } from "lucide-react";
+import { Fuel, Wrench, Receipt, IndianRupee, TrendingUp } from "lucide-react";
+import { formatCurrency } from "@/lib/format";
 
 interface Props {
   costs: { fuel: number; maintenance: number; expenses: number; total: number };
   revenue: number;
 }
 
-const fmt = (n: number) => `$${n.toLocaleString()}`;
+const fmt = (n: number) => formatCurrency(n);
 
 export function CostOverview({ costs, revenue }: Props) {
   const items = [
     { label: "Fuel", value: costs.fuel, Icon: Fuel },
     { label: "Maintenance", value: costs.maintenance, Icon: Wrench },
     { label: "Other Expenses", value: costs.expenses, Icon: Receipt },
-    { label: "Operational Cost", value: costs.total, Icon: DollarSign, emphasize: true },
+    { label: "Operational Cost", value: costs.total, Icon: IndianRupee, emphasize: true },
     { label: "Revenue", value: revenue, Icon: TrendingUp },
   ];
 

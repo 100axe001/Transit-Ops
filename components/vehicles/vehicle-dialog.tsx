@@ -112,7 +112,7 @@ export function VehicleDialog({ open, onOpenChange, vehicle }: Props) {
               {errors.maximumLoadCapacity && <p className="text-xs text-destructive">{errors.maximumLoadCapacity.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label>Acquisition Cost ($)</Label>
+              <Label>Acquisition Cost (₹)</Label>
               <Input type="number" {...register("acquisitionCost")} />
               {errors.acquisitionCost && <p className="text-xs text-destructive">{errors.acquisitionCost.message}</p>}
             </div>

@@ -8,6 +8,7 @@ import { MoreHorizontal, Play, CheckCircle, XCircle } from "lucide-react";
 import { dispatchTripAction, cancelTripAction } from "@/actions/trips";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { formatCurrency } from "@/lib/format";
 import type { Trip, Vehicle, Driver } from "@prisma/client";
 
 type TripWithRelations = Trip & { vehicle: Vehicle; driver: Driver };
@@ -69,7 +70,7 @@ export function TripTable({ trips, total, page, onComplete }: Props) {
                 <TableCell>{trip.driver.name}</TableCell>
                 <TableCell>{trip.cargoWeight}</TableCell>
                 <TableCell>{trip.actualDistance || trip.plannedDistance}</TableCell>
-                <TableCell>${trip.revenue.toLocaleString()}</TableCell>
+                <TableCell>{formatCurrency(trip.revenue)}</TableCell>
                 <TableCell><StatusBadge status={trip.status} /></TableCell>
                 <TableCell>
                   <DropdownMenu>

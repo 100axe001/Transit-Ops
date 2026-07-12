@@ -69,7 +69,7 @@ export function MaintenanceDialog({ open, onOpenChange, vehicles }: Props) {
             <Textarea {...register("description")} placeholder="Optional details" />
           </div>
           <div className="space-y-2">
-            <Label>Cost ($)</Label>
+            <Label>Cost (₹)</Label>
             <Input type="number" step="0.01" {...register("cost")} />
             {errors.cost && <p className="text-xs text-destructive">{errors.cost.message}</p>}
           </div>

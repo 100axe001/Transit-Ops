@@ -76,7 +76,7 @@ export function ExpenseDialog({ open, onOpenChange, vehicles }: Props) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Amount ($)</Label>
+              <Label>Amount (₹)</Label>
               <Input type="number" step="0.01" {...register("amount")} />
               {errors.amount && <p className="text-xs text-destructive">{errors.amount.message}</p>}
             </div>
