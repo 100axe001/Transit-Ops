@@ -4,42 +4,14 @@ Modern Transport Operations Management Platform — a lightweight ERP for fleet,
 
 ## Quick Start
 
-### Docker (recommended)
+Everything runs in Docker — no local setup, no `.env` to configure.
 
 ```bash
 docker compose up
 ```
 
-This starts PostgreSQL + the app. Visit http://localhost:3000.
-
-### Local Development
-
-```bash
-# Start PostgreSQL (via Docker or locally)
-docker compose up db -d
-
-# Set up your local environment variables
-# (.env is gitignored — it stays on your machine only)
-cp .env.example .env
-# then edit .env if your database/port differ from the defaults
-
-# Install dependencies
-npm install
-
-# Generate Prisma client
-npx prisma generate
-
-# Run migrations
-npx prisma migrate dev
-
-# Seed demo data
-npm run db:seed
-
-# Start dev server
-npm run dev
-```
-
-Visit http://localhost:3000
+This starts PostgreSQL, applies migrations, seeds demo data, and launches the app.
+When it's ready, visit **http://localhost:3000**.
 
 ### Demo Credentials
 
