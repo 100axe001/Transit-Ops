@@ -2,10 +2,12 @@
 
 import { vehicleService } from "@/lib/services";
 import { VehicleFormData } from "@/lib/validations";
+import { requirePermission } from "@/lib/auth/guard";
 import { revalidatePath } from "next/cache";
 
 export async function createVehicleAction(data: VehicleFormData) {
   try {
+    await requirePermission("vehicles:write");
     const vehicle = await vehicleService.create(data);
     revalidatePath("/vehicles");
     revalidatePath("/dashboard");
@@ -17,6 +19,7 @@ export async function createVehicleAction(data: VehicleFormData) {
 
 export async function updateVehicleAction(id: string, data: Partial<VehicleFormData>) {
   try {
+    await requirePermission("vehicles:write");
     const vehicle = await vehicleService.update(id, data);
     revalidatePath("/vehicles");
     revalidatePath("/dashboard");
@@ -28,6 +31,7 @@ export async function updateVehicleAction(id: string, data: Partial<VehicleFormD
 
 export async function deleteVehicleAction(id: string) {
   try {
+    await requirePermission("vehicles:write");
     await vehicleService.delete(id);
     revalidatePath("/vehicles");
     revalidatePath("/dashboard");
