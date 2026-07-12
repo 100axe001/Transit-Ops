@@ -4,7 +4,8 @@ import { ReportsClient } from "@/components/reports/reports-client";
 
 export default async function ReportsPage() {
   await requirePageAccess("reports:read");
-  const [fuelEfficiency, vehicleROI, tripTrends, expenseBreakdown] = await Promise.all([
+  const [kpis, fuelEfficiency, vehicleROI, tripTrends, expenseBreakdown] = await Promise.all([
+    analyticsService.getDashboardKPIs(),
     analyticsService.getFuelEfficiencyData(),
     analyticsService.getVehicleROI(),
     analyticsService.getTripTrends(),
@@ -13,6 +14,8 @@ export default async function ReportsPage() {
 
   return (
     <ReportsClient
+      fleetUtilization={kpis.fleetUtilization}
+      operationalCost={kpis.costs.total}
       fuelEfficiency={fuelEfficiency}
       vehicleROI={vehicleROI}
       tripTrends={tripTrends}

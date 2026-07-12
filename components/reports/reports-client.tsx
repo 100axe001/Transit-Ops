@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import { StatCard } from "@/components/shared/stat-card";
 import { PageHeader } from "@/components/shared/page-header";
-import { Download } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Download, Gauge, Activity, DollarSign, TrendingUp } from "lucide-react";
 import Papa from "papaparse";
 
 interface FuelEfficiencyItem {
@@ -41,6 +43,8 @@ interface ExpenseItem {
 }
 
 interface Props {
+  fleetUtilization: number;
+  operationalCost: number;
   fuelEfficiency: FuelEfficiencyItem[];
   vehicleROI: VehicleROIItem[];
   tripTrends: TripTrendItem[];
@@ -56,10 +60,89 @@ function downloadCSV(data: unknown[], filename: string) {
   link.click();
 }
 
-export function ReportsClient({ fuelEfficiency, vehicleROI, tripTrends, expenseBreakdown }: Props) {
+export function ReportsClient({
+  fleetUtilization,
+  operationalCost,
+  fuelEfficiency,
+  vehicleROI,
+  tripTrends,
+  expenseBreakdown,
+}: Props) {
+  const avgEfficiency = fuelEfficiency.length
+    ? fuelEfficiency.reduce((s, i) => s + i.efficiency, 0) / fuelEfficiency.length
+    : 0;
+  const avgROI = vehicleROI.length
+    ? vehicleROI.reduce((s, i) => s + i.roi, 0) / vehicleROI.length
+    : 0;
+  const topCostliest = [...vehicleROI]
+    .map((v) => ({ name: v.name, cost: v.fuelCost + v.maintenanceCost }))
+    .sort((a, b) => b.cost - a.cost)
+    .slice(0, 5);
+  const maxCost = topCostliest[0]?.cost || 1;
+
   return (
     <div className="space-y-6">
       <PageHeader title="Reports" description="Fleet analytics and operational reports" />
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="Fuel Efficiency"
+          value={`${avgEfficiency.toFixed(1)} km/L`}
+          icon={Gauge}
+          description="Avg across trips"
+        />
+        <StatCard
+          title="Fleet Utilization"
+          value={`${fleetUtilization.toFixed(1)}%`}
+          icon={Activity}
+          description="Vehicles on trips"
+        />
+        <StatCard
+          title="Operational Cost"
+          value={`$${operationalCost.toLocaleString()}`}
+          icon={DollarSign}
+          description="Fuel + maintenance + expenses"
+        />
+        <StatCard
+          title="Vehicle ROI"
+          value={`${avgROI.toFixed(1)}%`}
+          icon={TrendingUp}
+          description="Avg across fleet"
+        />
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Top Costliest Vehicles</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {topCostliest.length === 0 ? (
+            <p className="py-4 text-center text-sm text-muted-foreground">
+              No cost data yet
+            </p>
+          ) : (
+            topCostliest.map((v, i) => (
+              <div key={v.name} className="space-y-1">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">{v.name}</span>
+                  <span className="font-medium tabular-nums">
+                    ${v.cost.toLocaleString()}
+                  </span>
+                </div>
+                <div className="h-2 w-full rounded-full bg-muted">
+                  <div
+                    className={cn(
+                      "h-2 rounded-full",
+                      i === 0 ? "bg-rose-500" : i === 1 ? "bg-orange-500" : "bg-blue-500"
+                    )}
+                    style={{ width: `${Math.round((v.cost / maxCost) * 100)}%` }}
+                  />
+                </div>
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
 
       <Tabs defaultValue="fuel">
         <TabsList>
