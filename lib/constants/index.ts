@@ -66,3 +66,4 @@ export const expenseTypes = [
   { value: "MAINTENANCE", label: "Maintenance" },
   { value: "OTHER", label: "Other" },
 ];
+
