@@ -1,4 +1,5 @@
 import { fuelService, vehicleService } from "@/lib/services";
+import { requirePageAccess } from "@/lib/auth/guard";
 import { FuelClient } from "@/components/fuel/fuel-client";
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
 }
 
 export default async function FuelPage({ searchParams }: Props) {
+  await requirePageAccess("fuel:read");
   const params = await searchParams;
   const page = Number(params.page) || 1;
   const [fuelData, vehicleData] = await Promise.all([

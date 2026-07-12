@@ -1,5 +1,6 @@
 import { expenseService, vehicleService } from "@/lib/services";
 import { ExpenseType } from "@prisma/client";
+import { requirePageAccess } from "@/lib/auth/guard";
 import { ExpensesClient } from "@/components/expenses/expenses-client";
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export default async function ExpensesPage({ searchParams }: Props) {
+  await requirePageAccess("expenses:read");
   const params = await searchParams;
   const page = Number(params.page) || 1;
   const [expenseData, vehicleData] = await Promise.all([
