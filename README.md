@@ -13,6 +13,11 @@ docker compose up
 This starts PostgreSQL, applies migrations, seeds demo data, and launches the app.
 When it's ready, visit **http://localhost:3000**.
 
+**Clean slate / something looks off?** Run `./fresh-start.sh` — it wipes old
+containers and the database volume, rebuilds the image from scratch (no cache),
+and boots a fully migrated + seeded app. Use this on a new machine, or any time
+`docker compose up` seems to be running stale code or a half-set-up database.
+
 ### Demo Credentials
 
 | Role | Email | Password |
