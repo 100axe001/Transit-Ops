@@ -40,7 +40,11 @@ export async function setSession(payload: SessionPayload): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.set("session", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    // Only mark the cookie Secure when actually served over HTTPS. A Secure
+    // cookie is dropped by browsers over plain http:// (e.g. local Docker on
+    // http://localhost), which would bounce the user back to /login. Opt in
+    // with COOKIE_SECURE=true when deploying behind HTTPS.
+    secure: process.env.COOKIE_SECURE === "true",
     sameSite: "lax",
     maxAge: 60 * 60 * 24 * 7,
     path: "/",
