@@ -2,10 +2,12 @@
 
 import { tripService } from "@/lib/services";
 import { TripFormData, CompleteTripFormData } from "@/lib/validations";
+import { requirePermission } from "@/lib/auth/guard";
 import { revalidatePath } from "next/cache";
 
 export async function createTripAction(data: TripFormData) {
   try {
+    await requirePermission("trips:write");
     const trip = await tripService.create(data);
     revalidatePath("/trips");
     revalidatePath("/dashboard");
@@ -17,6 +19,7 @@ export async function createTripAction(data: TripFormData) {
 
 export async function dispatchTripAction(id: string) {
   try {
+    await requirePermission("trips:write");
     const trip = await tripService.dispatch(id);
     revalidatePath("/trips");
     revalidatePath("/vehicles");
@@ -30,6 +33,7 @@ export async function dispatchTripAction(id: string) {
 
 export async function completeTripAction(id: string, data: CompleteTripFormData) {
   try {
+    await requirePermission("trips:write");
     const trip = await tripService.complete(id, data);
     revalidatePath("/trips");
     revalidatePath("/vehicles");
@@ -43,6 +47,7 @@ export async function completeTripAction(id: string, data: CompleteTripFormData)
 
 export async function cancelTripAction(id: string) {
   try {
+    await requirePermission("trips:write");
     const trip = await tripService.cancel(id);
     revalidatePath("/trips");
     revalidatePath("/vehicles");
