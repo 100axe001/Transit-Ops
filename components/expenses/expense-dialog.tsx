@@ -1,3 +1,4 @@
+// Expense type selection and recording
 "use client";
 
 import { useForm } from "react-hook-form";
