@@ -1,3 +1,4 @@
+// Fuel log form dialog component
 "use client";
 
 import { useForm } from "react-hook-form";
