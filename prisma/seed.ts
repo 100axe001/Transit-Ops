@@ -1,3 +1,4 @@
+// Database seed script - generates demo data for all modules
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
