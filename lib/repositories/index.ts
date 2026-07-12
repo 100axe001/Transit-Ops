@@ -1,0 +1,7 @@
+export { vehicleRepository } from "./vehicle";
+export { driverRepository } from "./driver";
+export { tripRepository } from "./trip";
+export { maintenanceRepository } from "./maintenance";
+export { fuelRepository } from "./fuel";
+export { expenseRepository } from "./expense";
+export { userRepository } from "./user";
