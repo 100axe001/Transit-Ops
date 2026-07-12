@@ -1,9 +1,10 @@
-import { analyticsService } from "@/lib/services";
+import { analyticsService, billingService } from "@/lib/services";
 import { tripRepository } from "@/lib/repositories";
 import { driverRepository } from "@/lib/repositories";
 import { maintenanceRepository } from "@/lib/repositories";
 import { VehicleType, VehicleStatus } from "@prisma/client";
 import { DashboardKPIs } from "@/components/dashboard/kpis";
+import { BillingKPIs } from "@/components/dashboard/billing-kpis";
 import { DashboardFilters } from "@/components/dashboard/dashboard-filters";
 import { VehicleStatusBars } from "@/components/dashboard/vehicle-status-bars";
 import { CostOverview } from "@/components/dashboard/cost-overview";
@@ -26,9 +27,10 @@ export default async function DashboardPage({ searchParams }: Props) {
     region: params.region,
   };
 
-  const [kpis, regions, recentTrips, openMaintenance, expiringLicenses, expenseBreakdown] =
+  const [kpis, billingKpis, regions, recentTrips, openMaintenance, expiringLicenses, expenseBreakdown] =
     await Promise.all([
       analyticsService.getDashboardKPIs(filters),
+      billingService.getBillingKPIs(),
       analyticsService.getVehicleRegions(),
       tripRepository.findRecent(5),
       maintenanceRepository.findOpen(),
@@ -46,6 +48,12 @@ export default async function DashboardPage({ searchParams }: Props) {
       <DashboardFilters regions={regions} />
 
       <DashboardKPIs kpis={kpis} />
+
+      <BillingKPIs
+        biltysToday={billingKpis.biltysToday}
+        freightToday={billingKpis.freightToday}
+        totalOutstanding={billingKpis.totalOutstanding}
+      />
 
       <CostOverview costs={kpis.costs} revenue={kpis.revenue} />
 

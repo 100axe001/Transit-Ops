@@ -109,17 +109,19 @@ model Trip {
   cargoWeight     Float
   plannedDistance Float
   actualDistance  Float?
-  fuelConsumed   Float?
-  startTime      DateTime?
-  endTime        DateTime?
-  revenue        Float
-  status         TripStatus @default(DRAFT)
+  fuelConsumed    Float?
+  startTime       DateTime?
+  endTime         DateTime?
+  revenue         Float
+  status          TripStatus @default(DRAFT)
 
   vehicleId String
   vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
 
   driverId String
   driver   Driver @relation(fields: [driverId], references: [id])
+
+  bilty Bilty?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -161,4 +163,128 @@ model Expense {
   date        DateTime
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+}
+
+// === BILLING & COMPLIANCE LAYER (Phase 1: booking, parties, ledger) ===
+
+enum PartyType {
+  CONSIGNOR
+  CONSIGNEE
+  BOTH
+}
+
+enum BiltyStatus {
+  DRAFT
+  ACTIVE
+  CHALLAN_DONE
+  DELIVERED
+}
+
+enum PaymentMode {
+  CASH
+  UPI
+  BANK_TRANSFER
+}
+
+// Company master — used for print headers (name, GST, address).
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  address   String
+  gst       String?
+  pan       String?
+  phone     String
+  email     String
+  branch    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Consignor / consignee master with ledger relations.
+model Party {
+  id             String    @id @default(cuid())
+  name           String
+  type           PartyType @default(BOTH)
+  gst            String?
+  phone          String
+  email          String
+  address        String?
+  openingBalance Float     @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  consignorBiltys Bilty[]   @relation("consignorBiltys")
+  consigneeBiltys Bilty[]   @relation("consigneeBiltys")
+  payments        Payment[]
+  invoices        Invoice[]
+}
+
+// Bilty (LR) — the primary booking document. Charges are auto-calculated.
+model Bilty {
+  id            String      @id @default(cuid())
+  biltyNumber   String      @unique
+  tripId        String?     @unique
+  trip          Trip?       @relation(fields: [tripId], references: [id])
+  consignorId   String
+  consignor     Party       @relation("consignorBiltys", fields: [consignorId], references: [id])
+  consigneeId   String
+  consignee     Party       @relation("consigneeBiltys", fields: [consigneeId], references: [id])
+  fromLocation  String
+  toLocation    String
+  date          DateTime    @default(now())
+  goodsDesc     String
+  packages      Int
+  packingMethod String?
+  actualWeight  Float // in KG
+  chargedWeight Float // in Quintals (1 Quintal = 100kg)
+  grNumber      String?
+  privateMark   String?
+  remarks       String?
+  labourCharge  Float       @default(0) // ₹15 × chargedWeight
+  grCharge      Float       @default(30) // Fixed ₹30
+  doorDelivery  Float? // only if applicable
+  pfCharge      Float? // Platform fee, only if another transporter
+  serviceTax    Float?
+  total         Float       @default(0) // labour + gr + door + pf + tax
+  insurance     String      @default("Owner's Risk")
+  status        BiltyStatus @default(DRAFT)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  payments Payment[]
+  invoices Invoice[]
+}
+
+// Party payment against outstanding balance.
+model Payment {
+  id        String      @id @default(cuid())
+  partyId   String
+  party     Party       @relation(fields: [partyId], references: [id])
+  biltyId   String?
+  bilty     Bilty?      @relation(fields: [biltyId], references: [id])
+  amount    Float
+  date      DateTime    @default(now())
+  mode      PaymentMode
+  reference String?
+  createdAt DateTime    @default(now())
+}
+
+// Freight invoice generated from a Bilty.
+model Invoice {
+  id            String   @id @default(cuid())
+  invoiceNumber String   @unique
+  biltyId       String
+  bilty         Bilty    @relation(fields: [biltyId], references: [id])
+  partyId       String
+  party         Party    @relation(fields: [partyId], references: [id])
+  amount        Float
+  generatedAt   DateTime @default(now())
+  paid          Boolean  @default(false)
+}
+
+// Transaction-safe sequence counters (e.g. daily bilty numbers, challan serials).
+model Counter {
+  id    String @id @default(cuid())
+  key   String @unique
+  value Int    @default(0)
 }

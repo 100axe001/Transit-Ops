@@ -5,3 +5,6 @@ export { maintenanceRepository } from "./maintenance";
 export { fuelRepository } from "./fuel";
 export { expenseRepository } from "./expense";
 export { userRepository } from "./user";
+export { partyRepository } from "./party";
+export { biltyRepository } from "./bilty";
+export { counterRepository } from "./counter";

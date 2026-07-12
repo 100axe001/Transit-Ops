@@ -23,6 +23,8 @@ const MODULES: { key: string; label: string }[] = [
   { key: "maintenance", label: "Maint." },
   { key: "fuel", label: "Fuel" },
   { key: "expenses", label: "Expenses" },
+  { key: "billing", label: "Billing" },
+  { key: "parties", label: "Parties" },
   { key: "reports", label: "Reports" },
 ];
 

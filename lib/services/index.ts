@@ -6,3 +6,5 @@ export { maintenanceService } from "./maintenance";
 export { fuelService } from "./fuel";
 export { expenseService } from "./expense";
 export { analyticsService } from "./analytics";
+export { partyService } from "./party";
+export { billingService } from "./billing";

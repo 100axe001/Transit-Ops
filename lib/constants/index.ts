@@ -8,6 +8,8 @@ import {
   Receipt,
   BarChart3,
   Settings,
+  FileText,
+  Building2,
   LucideIcon,
 } from "lucide-react";
 import type { Permission } from "@/lib/permissions";
@@ -27,6 +29,8 @@ export const navItems: NavItem[] = [
   { title: "Maintenance", href: "/maintenance", icon: Wrench, permission: "maintenance:read" },
   { title: "Fuel", href: "/fuel", icon: Fuel, permission: "fuel:read" },
   { title: "Expenses", href: "/expenses", icon: Receipt, permission: "expenses:read" },
+  { title: "Billing", href: "/billing", icon: FileText, permission: "billing:read" },
+  { title: "Parties", href: "/parties", icon: Building2, permission: "parties:read" },
   { title: "Reports", href: "/reports", icon: BarChart3, permission: "reports:read" },
   { title: "Settings", href: "/settings", icon: Settings, permission: "settings:read" },
 ];
@@ -67,5 +71,17 @@ export const expenseTypes = [
   { value: "PARKING", label: "Parking" },
   { value: "MAINTENANCE", label: "Maintenance" },
   { value: "OTHER", label: "Other" },
+];
+
+export const partyTypes = [
+  { value: "CONSIGNOR", label: "Consignor" },
+  { value: "CONSIGNEE", label: "Consignee" },
+  { value: "BOTH", label: "Both" },
+];
+
+export const paymentModes = [
+  { value: "CASH", label: "Cash" },
+  { value: "UPI", label: "UPI" },
+  { value: "BANK_TRANSFER", label: "Bank Transfer" },
 ];
 

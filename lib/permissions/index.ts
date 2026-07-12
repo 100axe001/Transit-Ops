@@ -9,6 +9,8 @@ type Permission =
   | "expenses:read" | "expenses:write"
   | "reports:read"
   | "dashboard:read"
+  | "parties:read" | "parties:write"
+  | "billing:read" | "billing:write"
   | "settings:read" | "settings:write";
 
 const rolePermissions: Record<UserRole, Permission[]> = {
@@ -21,6 +23,8 @@ const rolePermissions: Record<UserRole, Permission[]> = {
     "expenses:read", "expenses:write",
     "reports:read",
     "dashboard:read",
+    "parties:read", "parties:write",
+    "billing:read", "billing:write",
     "settings:read", "settings:write",
   ],
   DISPATCHER: [
@@ -32,6 +36,8 @@ const rolePermissions: Record<UserRole, Permission[]> = {
     "expenses:read",
     "dashboard:read",
     "reports:read",
+    "parties:read",
+    "billing:read", "billing:write",
   ],
   SAFETY_OFFICER: [
     "vehicles:read",
@@ -50,6 +56,8 @@ const rolePermissions: Record<UserRole, Permission[]> = {
     "expenses:read", "expenses:write",
     "reports:read",
     "dashboard:read",
+    "parties:read", "parties:write",
+    "billing:read", "billing:write",
   ],
 };
 
